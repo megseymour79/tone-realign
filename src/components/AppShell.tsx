@@ -63,7 +63,7 @@ export function AppShell({
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const tour = appTourStops(pathname);
-  const progression = useQuery(api.dailyLog.progression);
+  const progression = useQuery(api.dailyLog.progression);const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const level = levelInfo(progression?.totalXp ?? 0);
 
