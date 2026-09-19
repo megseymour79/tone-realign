@@ -1,10 +1,11 @@
+import { useMutation } from "convex/react";
+import { api } from "../convex/_generated/api";
 import { NBBadge, NBPanel, NBMeter } from "@/components/nb";
 import { AppShell } from "@/components/AppShell";
 import { ACHIEVEMENTS, levelInfo, type AchievementStats } from "@/lib/gamify";
 import { TRENDS_UNLOCK, buildToneTrends, isUnlocked, type UnlockStats } from "@/lib/unlocks";
 import { TONE_LABELS } from "@/lib/tone-analyzer";
 import { DRILLS } from "@/lib/drills";
-import { api } from "@/convex/_generated/api";
 import {
   History,
   Lock,
@@ -338,7 +339,33 @@ function RecentTakeRow({
             </div>
           ))}
         </div>
+<DeleteAccountSection />
       )}
+   
+function DeleteAccountSection() {
+  const deleteAccount = useMutation(api.users.deleteAccount);
+
+  const handleDelete = async () => {
+    if (confirm("Are you sure? This will permanently delete your account and all associated data.")) {
+      await deleteAccount();
+      window.location.href = "/";
+    }
+  };
+
+  return (
+    <div className="border-t border-red-200 pt-6 mt-12 mb-8">
+      <h3 className="text-sm font-semibold text-red-600 mb-2">Danger Zone</h3>
+      <p className="text-xs text-neutral-500 mb-4">
+        Permanently remove your account and all stored preferences.
+      </p>
+      <button
+        onClick={handleDelete}
+        className="px-4 py-2 bg-red-600 text-white text-xs font-semibold rounded hover:bg-red-700 transition-colors"
+      >
+        Delete Account
+      </button>
     </div>
+  );
+}</div>
   );
 }
