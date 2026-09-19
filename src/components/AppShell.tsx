@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { useQuery } from "convex/react";
 import { Link, useLocation, useNavigate } from "react-router";
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
