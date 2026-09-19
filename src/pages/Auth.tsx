@@ -151,6 +151,16 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                     className="nb size-10 bg-ink cursor-pointer lg:hidden"
                     onClick={() => navigate("/")}
                   />
+<p className="text-xs text-neutral-500 text-center mt-4">
+  By signing up or continuing, you agree to ShiftedTone's{" "}
+  <a href="/terms" className="underline hover:text-neutral-800 transition-colors">
+    Terms of Service
+  </a>{" "}
+  and acknowledge our{" "}
+  <a href="/privacy" className="underline hover:text-neutral-800 transition-colors">
+    Privacy Policy
+  </a>.
+</p>
                   <div>
                     <p className="font-display text-xl leading-none">
                       Welcome in
