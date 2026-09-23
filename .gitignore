@@ -1,24 +1,12 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-bun-debug.log*
-lerna-debug.log*
+# Copy this file to .env.local or configure these in Vercel.
+# Never commit real secrets.
 
-node_modules
-dist
-dist-ssr
-*.local
+# Convex client configuration
+VITE_CONVEX_URL=https://your-convex-url.convex.cloud
+CONVEX_DEPLOYMENT=your-convex-deployment-name
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# App runtime / auth settings
+SITE_URL=http://localhost:5173
+JWKS={"keys":[{"kty":"EC","d":"YOUR_KEY","crv":"P-256","kid":"dev","k":"YOUR_KEY","alg":"ES256"}]}
+JWT_PRIVATE_KEY=replace-with-your-private-key
+DOTENV_PRIVATE_KEY_LOCAL=replace-with-your-dotenv-private-key
