@@ -22,7 +22,17 @@ import {
 } from "@/lib/tone-analyzer";
 import { useToneCapture } from "@/hooks/use-tone-capture";
 import { api } from "@/convex/_generated/api";
-import { ArrowLeft, Check, Lock, Mic, MessageSquareText, Square, Target } from "lucide-react";
+import {
+  ArrowLeft,
+  Check,
+  Lock,
+  Mic,
+  MessageSquareText,
+  Play,
+  Square,
+  Target,
+  Volume2,
+} from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router";
@@ -192,11 +202,11 @@ function PracticeRunner({ drill, isDaily }: { drill: Drill; isDaily: boolean }) 
     lastPeakRawRms,
     activeDeviceLabel,
     micMuted,
+    audioUrl,
     start,
     stop,
     reset,
-  } =
-    capture;
+  } = capture;
 
   return (
     <AppShell>
@@ -414,174 +424,218 @@ function PracticeRunner({ drill, isDaily }: { drill: Drill; isDaily: boolean }) 
         {/* Results */}
         {state === "done" && analysis && (
           <div ref={resultsRef}>
-          <NBPanel className="p-6">
-            {/* The one highest-leverage fix for next time. */}
-            <div className="nb mb-5 bg-sun p-4">
-              <p className="text-[10px] font-bold uppercase tracking-widest">
-                Biggest lever — work this one thing next take
-              </p>
-              <p className="mt-1 text-sm font-medium">
-                {biggestLever(analysis).tip}
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <NBBadge
-                  className={
-                    TONE_LABELS[analysis.dominantTone]?.color ?? "bg-secondary"
-                  }
-                >
-                  {TONE_LABELS[analysis.dominantTone]?.label ??
-                    analysis.dominantTone}
-                </NBBadge>
-                <p className="max-w-md text-sm text-muted-foreground">
-                  {TONE_LABELS[analysis.dominantTone]?.note}
+            <NBPanel className="p-6">
+              {/* The one highest-leverage fix for next time. */}
+              <div className="nb mb-5 bg-sun p-4">
+                <p className="text-[10px] font-bold uppercase tracking-widest">
+                  Biggest lever — work this one thing next take
+                </p>
+                <p className="mt-1 text-sm font-medium">
+                  {biggestLever(analysis).tip}
                 </p>
               </div>
-              <div className="text-right">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                  Overall
-                </div>
-                <motion.div
-                  initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 260, damping: 16, delay: 0.15 }}
-                  className="font-display text-5xl"
-                >
-                  {analysis.overallScore}
-                </motion.div>
-              </div>
-            </div>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {(
-                [
-                  ["calm", analysis.calmScore],
-                  ["energy", analysis.energyScore],
-                  ["clarity", analysis.clarityScore],
-                  ["stability", analysis.stabilityScore],
-                ] as const
-              ).map(([key, score]) => {
-                const factor = TONE_FACTORS[key];
-                const open = expandedFactor === key;
-                return (
-                  <div key={key} className="nb bg-card p-3">
-                    <button
-                      type="button"
-                      onClick={() => setExpandedFactor(open ? null : key)}
-                      aria-expanded={open}
-                      className="flex w-full items-center justify-between text-left"
-                    >
-                      <span className="text-xs font-bold uppercase tracking-widest">
-                        {factor.label}
-                      </span>
-                      <span className="flex items-center gap-2">
-                        <span className="font-display text-xl">{score}</span>
-                        <span
-                          aria-hidden
-                          className={cn(
-                            "text-[10px] font-bold transition-transform",
-                            open && "rotate-180",
-                          )}
-                        >
-                          ▼
-                        </span>
-                      </span>
-                    </button>
-                    <NBMeter value={score} className="mt-2" />
-                    {open && (
-                      <div className="mt-3 flex flex-col gap-3 border-t-2 border-dashed border-ink/20 pt-3 text-sm">
-                        {(() => {
-                          const fb: FactorFeedback =
-                            buildFactorFeedback(analysis)[key];
-                          const STATUS_STYLES: Record<
-                            FactorFeedback["status"],
-                            string
-                          > = {
-                            strong: "bg-mint",
-                            decent: "bg-sun",
-                            wobbly: "bg-paper",
-                            rough: "bg-coral",
-                          };
-                          return (
-                            <>
-                              <p>
-                                <span
-                                  className={cn(
-                                    "nb mr-2 inline-block bg-card px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest",
-                                    STATUS_STYLES[fb.status],
-                                  )}
-                                >
-                                  {fb.status}
-                                </span>
-                                <span>{fb.read}</span>
-                              </p>
-                              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                                Your numbers: {fb.yourNumbers}
-                              </p>
-                              <p>
-                                <span className="font-bold">Practice this: </span>
-                                <span className="text-muted-foreground">{fb.tip}</span>
-                              </p>
-                              <p>
-                                <span className="font-bold">How it's rated: </span>
-                                <span className="text-muted-foreground">{factor.how}</span>
-                              </p>
-                              <p>
-                                <span className="font-bold">The goal: </span>
-                                <span className="text-muted-foreground">{factor.goal}</span>
-                              </p>
-                            </>
-                          );
-                        })()}
-                      </div>
-                    )}
+              {audioUrl && (
+                <div className="nb mb-5 bg-card p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <Volume2 className="size-4" />
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                        Your take
+                      </p>
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                      Playback
+                    </span>
                   </div>
-                );
-              })}
-            </div>
+                  <audio controls src={audioUrl} className="mt-3 w-full" />
+                </div>
+              )}
 
-            <div className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
-              <div className="nb bg-secondary p-3">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                  Pitch
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <NBBadge
+                    className={
+                      TONE_LABELS[analysis.dominantTone]?.color ?? "bg-secondary"
+                    }
+                  >
+                    {TONE_LABELS[analysis.dominantTone]?.label ??
+                      analysis.dominantTone}
+                  </NBBadge>
+                  <p className="max-w-md text-sm text-muted-foreground">
+                    {TONE_LABELS[analysis.dominantTone]?.note}
+                  </p>
                 </div>
-                <div className="font-display text-lg">{analysis.avgPitchHz} Hz</div>
+                <div className="text-right">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Overall
+                  </div>
+                  <motion.div
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 260, damping: 16, delay: 0.15 }}
+                    className="font-display text-5xl"
+                  >
+                    {analysis.overallScore}
+                  </motion.div>
+                </div>
               </div>
-              <div className="nb bg-secondary p-3">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                  Range
-                </div>
-                <div className="font-display text-lg">{analysis.pitchRangeHz} Hz</div>
-              </div>
-              <div className="nb bg-secondary p-3">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                  Pace
-                </div>
-                <div className="font-display text-lg">{analysis.wordsPerMinute} wpm</div>
-              </div>
-              <div className="nb bg-secondary p-3">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                  Voiced
-                </div>
-                <div className="font-display text-lg">
-                  {Math.round(analysis.voicedRatio * 100)}%
-                </div>
-              </div>
-            </div>
 
-            <SaveRow
-              analysis={analysis}
-              drillId={drill.id}
-              elapsedMs={elapsedMs}
-              transcript={transcript}
-              context={context.trim() || undefined}
-              saved={saved}
-              onSaved={() => setSaved(true)}
-              onRetry={reset}
-              drillStats={bestByDrill.get(drill.id)}
-            />
-          </NBPanel>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <div className="nb bg-secondary p-4">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Detailed tone description
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {TONE_LABELS[analysis.dominantTone]?.note}
+                  </p>
+                  <p className="mt-3 text-sm leading-relaxed">
+                    This take reads as <span className="font-bold">{TONE_LABELS[analysis.dominantTone]?.label ?? analysis.dominantTone}</span> — the strongest next move is to work on the weakest factor below and keep the line steady instead of chasing volume or speed.
+                  </p>
+                </div>
+                <div className="nb bg-secondary p-4">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Highest impact fix
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed">
+                    {biggestLever(analysis).tip}
+                  </p>
+                  <div className="mt-3 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    <Play className="size-3.5" />
+                    Listen back once before your next take
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                {(
+                  [
+                    ["calm", analysis.calmScore],
+                    ["energy", analysis.energyScore],
+                    ["clarity", analysis.clarityScore],
+                    ["stability", analysis.stabilityScore],
+                  ] as const
+                ).map(([key, score]) => {
+                  const factor = TONE_FACTORS[key];
+                  const open = expandedFactor === key;
+                  return (
+                    <div key={key} className="nb bg-card p-3">
+                      <button
+                        type="button"
+                        onClick={() => setExpandedFactor(open ? null : key)}
+                        aria-expanded={open}
+                        className="flex w-full items-center justify-between text-left"
+                      >
+                        <span className="text-xs font-bold uppercase tracking-widest">
+                          {factor.label}
+                        </span>
+                        <span className="flex items-center gap-2">
+                          <span className="font-display text-xl">{score}</span>
+                          <span
+                            aria-hidden
+                            className={cn(
+                              "text-[10px] font-bold transition-transform",
+                              open && "rotate-180",
+                            )}
+                          >
+                            ▼
+                          </span>
+                        </span>
+                      </button>
+                      <NBMeter value={score} className="mt-2" />
+                      {open && (
+                        <div className="mt-3 flex flex-col gap-3 border-t-2 border-dashed border-ink/20 pt-3 text-sm">
+                          {(() => {
+                            const fb: FactorFeedback =
+                              buildFactorFeedback(analysis)[key];
+                            const STATUS_STYLES: Record<
+                              FactorFeedback["status"],
+                              string
+                            > = {
+                              strong: "bg-mint",
+                              decent: "bg-sun",
+                              wobbly: "bg-paper",
+                              rough: "bg-coral",
+                            };
+                            return (
+                              <>
+                                <p>
+                                  <span
+                                    className={cn(
+                                      "nb mr-2 inline-block bg-card px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest",
+                                      STATUS_STYLES[fb.status],
+                                    )}
+                                  >
+                                    {fb.status}
+                                  </span>
+                                  <span>{fb.read}</span>
+                                </p>
+                                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                                  Your numbers: {fb.yourNumbers}
+                                </p>
+                                <p>
+                                  <span className="font-bold">Practice this: </span>
+                                  <span className="text-muted-foreground">{fb.tip}</span>
+                                </p>
+                                <p>
+                                  <span className="font-bold">How it's rated: </span>
+                                  <span className="text-muted-foreground">{factor.how}</span>
+                                </p>
+                                <p>
+                                  <span className="font-bold">The goal: </span>
+                                  <span className="text-muted-foreground">{factor.goal}</span>
+                                </p>
+                              </>
+                            );
+                          })()}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+                <div className="nb bg-secondary p-3">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Pitch
+                  </div>
+                  <div className="font-display text-lg">{analysis.avgPitchHz} Hz</div>
+                </div>
+                <div className="nb bg-secondary p-3">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Range
+                  </div>
+                  <div className="font-display text-lg">{analysis.pitchRangeHz} Hz</div>
+                </div>
+                <div className="nb bg-secondary p-3">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Pace
+                  </div>
+                  <div className="font-display text-lg">{analysis.wordsPerMinute} wpm</div>
+                </div>
+                <div className="nb bg-secondary p-3">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Voiced
+                  </div>
+                  <div className="font-display text-lg">
+                    {Math.round(analysis.voicedRatio * 100)}%
+                  </div>
+                </div>
+              </div>
+
+              <SaveRow
+                analysis={analysis}
+                drillId={drill.id}
+                elapsedMs={elapsedMs}
+                transcript={transcript}
+                context={context.trim() || undefined}
+                saved={saved}
+                onSaved={() => setSaved(true)}
+                onRetry={reset}
+                drillStats={bestByDrill.get(drill.id)}
+              />
+            </NBPanel>
           </div>
         )}
 
