@@ -26,6 +26,10 @@ describe("tone-check data", () => {
 });
 
 describe("scoreToneCheck", () => {
+  test("falls back deterministically when no answers are provided", () => {
+    expect(scoreToneCheck([])).toBe("matcher");
+  });
+
   test("clean majorities win", () => {
     const all: ToneArchetype[] = ["matcher", "matcher", "matcher"];
     expect(scoreToneCheck(all)).toBe("matcher");
