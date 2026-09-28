@@ -36,7 +36,7 @@ import {
 import { useMutation, useQuery } from "convex/react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { AppShell } from "@/components/AppShell";
 import { CONTEXT_PROMPTS } from "@/lib/context-prompts";
 import { levelInfo } from "@/lib/gamify";
@@ -145,19 +145,23 @@ function PracticeRunner({ drill, isDaily }: { drill: Drill; isDaily: boolean }) 
   // re-render must never reset the ticking timer.
   const [countdown, setCountdown] = useState<number | null>(null);
   const captureRef = useRef(capture);
-  captureRef.current = capture;
+  useEffect(() => {
+    captureRef.current = capture;
+  }, [capture]);
   const beginCountdown = () => {
     setCountdown(COUNTDOWN_SECONDS);
   };
   useEffect(() => {
     if (countdown === null) return;
-    if (countdown <= 0) {
-      setCountdown(null);
-      const c = captureRef.current;
-      c.start(c.lastPeakRawRms, getSavedMicDeviceId());
-      return;
-    }
-    const t = window.setTimeout(() => setCountdown((c) => (c ?? 1) - 1), 1000);
+    const t = window.setTimeout(() => {
+      if (countdown <= 1) {
+        setCountdown(null);
+        const c = captureRef.current;
+        c.start(c.lastPeakRawRms, getSavedMicDeviceId());
+        return;
+      }
+      setCountdown((c) => (c ?? 1) - 1);
+    }, 1000);
     return () => window.clearTimeout(t);
   }, [countdown]);
 
@@ -199,12 +203,9 @@ function PracticeRunner({ drill, isDaily }: { drill: Drill; isDaily: boolean }) 
     elapsedMs,
     analysis,
     transcript,
-    lastPeakRawRms,
     activeDeviceLabel,
     micMuted,
     audioUrl,
-    start,
-    stop,
     reset,
   } = capture;
 

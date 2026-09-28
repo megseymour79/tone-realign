@@ -1,4 +1,4 @@
-import { NBBadge, NBButton, NBPanel } from "@/components/nb";
+import { NBBadge, NBButton } from "@/components/nb";
 import { PublicLayout } from "@/components/PublicLayout";
 import { PagePager } from "@/components/PagePager";
 import { READING_LIST } from "@/lib/reading-list";

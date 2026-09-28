@@ -55,7 +55,6 @@ export function AppShell({
 }) {
   const { signOut } = useAuth();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
   const progression = useQuery(api.dailyLog.progression);
   const level = levelInfo(progression?.totalXp ?? 0);
 

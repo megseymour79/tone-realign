@@ -35,7 +35,6 @@ const DAY_LETTERS = ["S", "M", "T", "W", "T", "F", "S"];
  */
 export default function Dashboard() {
   const progression = useQuery(api.dailyLog.progression);
-  const drillStats = useQuery(api.sessions.drillStats);
 
   // Stats drive every panel here (level, unlocks, checklist, next-unlock);
   // render only once they've loaded so a veteran never sees a zeros-frame.
