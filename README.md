@@ -42,5 +42,5 @@ Key variables:
 
 ## Launch notes
 
-- Review `/home/runner/work/tone-realign/tone-realign/LAUNCH_CHECKLIST.md` before production deployment.
+- Review `./LAUNCH_CHECKLIST.md` before production deployment.
 - Keep `.env.keys` comments-only and never commit secrets.

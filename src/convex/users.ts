@@ -76,16 +76,12 @@ export async function deleteAccountData(ctx: MutationCtx, userId: Id<"users">) {
     await ctx.db.delete(session._id);
   }
 
-  for (const provider of ["anonymous", "email-otp"] as const) {
-    const account = await ctx.db
-      .query("authAccounts")
-      .withIndex("userIdAndProvider", (q) =>
-        q.eq("userId", userId).eq("provider", provider),
-      )
-      .unique();
+  const accounts = await ctx.db
+    .query("authAccounts")
+    .withIndex("userId", (q) => q.eq("userId", userId))
+    .collect();
 
-    if (!account) continue;
-
+  for (const account of accounts) {
     const verificationCodes = await ctx.db
       .query("authVerificationCodes")
       .withIndex("accountId", (q) => q.eq("accountId", account._id))

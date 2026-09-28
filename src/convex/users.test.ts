@@ -94,6 +94,7 @@ describe("deleteAccountData", () => {
     const otherUserId = "user_2" as Id<"users">;
     const emailAccountId = "account_email";
     const anonAccountId = "account_anon";
+    const oauthAccountId = "account_oauth";
     const otherAccountId = "account_other";
     const sessionId = "session_1";
     const otherSessionId = "session_2";
@@ -131,11 +132,13 @@ describe("deleteAccountData", () => {
       authAccounts: [
         { _id: emailAccountId, userId, provider: "email-otp" },
         { _id: anonAccountId, userId, provider: "anonymous" },
+        { _id: oauthAccountId, userId, provider: "google" },
         { _id: otherAccountId, userId: otherUserId, provider: "email-otp" },
       ],
       authVerificationCodes: [
         { _id: "code_1", accountId: emailAccountId },
         { _id: "code_2", accountId: anonAccountId },
+        { _id: "code_4", accountId: oauthAccountId },
         { _id: "code_3", accountId: otherAccountId },
       ],
     };
