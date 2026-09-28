@@ -21,6 +21,34 @@ function makeCtx(store: Store) {
   const db = {
     query(table: TableName) {
       return {
+        filter(
+          predicate: (q: {
+            field: (name: string) => { field: string };
+            eq: (
+              left: { field: string } | unknown,
+              right: { field: string } | unknown,
+            ) => { field: string; value: unknown };
+          }) => { field: string; value: unknown },
+        ) {
+          const selected = predicate({
+            field(name) {
+              return { field: name };
+            },
+            eq(left, right) {
+              if (typeof left === "object" && left && "field" in left) {
+                return { field: String(left.field), value: right };
+              }
+              if (typeof right === "object" && right && "field" in right) {
+                return { field: String(right.field), value: left };
+              }
+              throw new Error("Expected one side of eq() to be a field reference");
+            },
+          });
+          return {
+            collect: async () =>
+              store[table].filter((doc) => doc[selected.field] === selected.value),
+          };
+        },
         withIndex(
           _indexName: string,
           selector: (q: {

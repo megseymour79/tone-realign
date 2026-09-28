@@ -76,10 +76,7 @@ export async function deleteAccountData(ctx: MutationCtx, userId: Id<"users">) {
     await ctx.db.delete(session._id);
   }
 
-  const accounts = await ctx.db
-    .query("authAccounts")
-    .withIndex("userId", (q) => q.eq("userId", userId))
-    .collect();
+  const accounts = await listAuthAccountsForUser(ctx, userId);
 
   for (const account of accounts) {
     const verificationCodes = await ctx.db
@@ -114,4 +111,13 @@ async function deleteByUser(
   for (const doc of docs) {
     await ctx.db.delete(doc._id);
   }
+}
+
+async function listAuthAccountsForUser(ctx: MutationCtx, userId: Id<"users">) {
+  // Convex Auth manages this table and does not expose a userId-only index, so
+  // account deletion uses the documented table shape and filters on the linked user.
+  return await ctx.db
+    .query("authAccounts")
+    .filter((q) => q.eq(q.field("userId"), userId))
+    .collect();
 }

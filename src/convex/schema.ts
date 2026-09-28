@@ -20,7 +20,6 @@ const schema = defineSchema(
   {
     // default auth tables using convex auth.
     ...authTables, // do not remove or modify
-    authAccounts: authTables.authAccounts.index("userId", ["userId"]),
 
     // the users table is the default users table that is brought in by the authTables
     users: defineTable({
