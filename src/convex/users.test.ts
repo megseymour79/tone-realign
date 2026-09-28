@@ -17,6 +17,17 @@ type TableName =
 type Doc = { _id: string; [key: string]: unknown };
 type Store = Record<TableName, Doc[]>;
 
+const EXPECTED_INDEX: Partial<Record<TableName, string>> = {
+  coachNotes: "by_user",
+  dailyLog: "by_user",
+  drillAttempts: "by_user",
+  practiceSessions: "by_user",
+  reframeLogs: "by_user",
+  authSessions: "userId",
+  authRefreshTokens: "sessionId",
+  authVerificationCodes: "accountId",
+};
+
 function makeCtx(store: Store) {
   const db = {
     query(table: TableName) {
@@ -50,7 +61,7 @@ function makeCtx(store: Store) {
           };
         },
         withIndex(
-          _indexName: string,
+          indexName: string,
           selector: (q: {
             eq: (field: string, value: unknown) => {
               eq: (nextField: string, nextValue: unknown) => { values: Record<string, unknown> };
@@ -58,6 +69,10 @@ function makeCtx(store: Store) {
             };
           }) => { values: Record<string, unknown> },
         ) {
+          const expectedIndex = EXPECTED_INDEX[table];
+          if (expectedIndex && indexName !== expectedIndex) {
+            throw new Error(`Unexpected index for ${table}: ${indexName}`);
+          }
           const selected = selector({
             eq(field, value) {
               const values: Record<string, unknown> = { [field]: value };
