@@ -40,6 +40,7 @@ import { motion } from "framer-motion";
 import { AppShell } from "@/components/AppShell";
 import { CONTEXT_PROMPTS } from "@/lib/context-prompts";
 import { levelInfo } from "@/lib/gamify";
+import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import type { Id } from "@/convex/_generated/dataModel";
@@ -715,6 +716,10 @@ function SaveRow({
         dominantTone: analysis.dominantTone,
         transcript: transcript || undefined,
         scenario: context,
+      });
+      trackEvent("practice_saved", {
+        drill: drillId,
+        score: analysis.overallScore,
       });
       setSavedId(sessionId);
       toast.success("Saved. It's in your log.");

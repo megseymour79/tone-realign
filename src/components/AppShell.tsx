@@ -23,7 +23,7 @@ import {
   Wind,
 } from "lucide-react";
 import { useQuery } from "convex/react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link, useLocation } from "react-router";
 import { type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -54,13 +54,11 @@ export function AppShell({
   children: ReactNode;
 }) {
   const { signOut } = useAuth();
-  const navigate = useNavigate();
   const progression = useQuery(api.dailyLog.progression);
   const level = levelInfo(progression?.totalXp ?? 0);
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/");
   };
 
   return (
