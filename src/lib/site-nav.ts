@@ -61,7 +61,7 @@ export const APP_ORDER: { to: string; label: string; blurb: string }[] = [
   { to: "/translate", label: "Translate", blurb: "Say it again, mean it" },
   { to: "/quiz", label: "Read the Room", blurb: "Train the judgment" },
   { to: "/reframe", label: "Reframe Lab", blurb: "Rewrite the reaction" },
-  { to: "/progress", label: "Progress", blurb: "Trends, trophies, history" },
+  { to: "/progress", label: "Progress", blurb: "Recent takes and trends" },
 ];
 
 /**
@@ -82,7 +82,7 @@ export function appTourStops(
   pathname: string,
 ): { prev: (typeof APP_ORDER)[number] | null; next: (typeof APP_ORDER)[number] | null } {
   const len = APP_ORDER.length;
-  let i = APP_ORDER.findIndex((p) => p.to === pathname);
+  const i = APP_ORDER.findIndex((p) => p.to === pathname);
   if (i < 0) {
     const match = APP_VIRTUAL.find((m) => pathname.startsWith(m.prefix));
     if (match) return { prev: APP_ORDER[match.prev], next: APP_ORDER[match.next] };

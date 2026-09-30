@@ -1,7 +1,5 @@
-import { levelInfo } from "@/lib/gamify";
 import { APP_ORDER, PAGE_ORDER } from "@/lib/site-nav";
 import { useAuth } from "@/hooks/use-auth";
-import { api } from "@/convex/_generated/api";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +20,6 @@ import {
   TrendingUp,
   Wind,
 } from "lucide-react";
-import { useQuery } from "convex/react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { type ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -55,9 +52,6 @@ export function AppShell({
 }) {
   const { signOut } = useAuth();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const progression = useQuery(api.dailyLog.progression);
-  const level = levelInfo(progression?.totalXp ?? 0);
 
   const handleSignOut = async () => {
     await signOut();
@@ -96,13 +90,6 @@ export function AppShell({
 
           <div className="flex items-center gap-3">
             <EverythingMenu />
-            <Link to="/dashboard#progress" className="flex items-center gap-2" title={`Level ${level.level} — ${level.label}`}>
-              <LevelRing level={level.level} pct={level.progressPct} />
-              <span className="hidden flex-col leading-tight lg:flex">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-paper/60">Level {level.level}</span>
-                <span className="font-display text-xs">{level.label}</span>
-              </span>
-            </Link>
             <button onClick={handleSignOut} className="nb nb-press flex items-center gap-2 bg-coral px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white">
               <LogOut className="size-3.5" />
               <span className="hidden sm:inline">Sign out</span>

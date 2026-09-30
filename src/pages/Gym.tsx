@@ -13,15 +13,16 @@ import {
 import { api } from "@/convex/_generated/api";
 import {
   ArrowRight,
+  ChevronLeft,
+  ChevronRight,
   MessagesSquare,
   Mic,
   Sparkles,
   Timer,
-  Trophy,
   Lock,
 } from "lucide-react";
 import { useQuery } from "convex/react";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 
 /**
  * /gym — the training floor. One job: pick a drill and do it. The daily
@@ -29,6 +30,7 @@ import { Link } from "react-router";
  * gates, and the no-mic practices live one callout away.
  */
 export default function Gym() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const progression = useQuery(api.dailyLog.progression);
   const drillStats = useQuery(api.sessions.drillStats);
   // Unlocks and bests are computed from live stats; rendering before
@@ -58,6 +60,19 @@ export default function Gym() {
     const gate = UNLOCKABLE_DRILLS.find((u) => u.id === drillId);
     return !gate || isUnlocked(gate, unlockStats);
   });
+  const perPage = 4;
+  const totalPages = Math.max(1, Math.ceil(DRILLS.length / perPage));
+  const rawPage = Number(searchParams.get("page") ?? "1");
+  const page = Number.isFinite(rawPage)
+    ? Math.min(totalPages, Math.max(1, Math.floor(rawPage)))
+    : 1;
+  const visibleDrills = DRILLS.slice((page - 1) * perPage, page * perPage);
+  const setPage = (nextPage: number) => {
+    const next = new URLSearchParams(searchParams);
+    if (nextPage <= 1) next.delete("page");
+    else next.set("page", String(nextPage));
+    setSearchParams(next);
+  };
 
   return (
     <AppShell active="gym">
@@ -92,12 +107,10 @@ export default function Gym() {
             <h2 className="font-display text-2xl">
               The <span className="italic text-coral">gym</span>
             </h2>
-            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-              Mic on. One honest take at a time.
-            </p>
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Page {page} of {totalPages}</p>
           </div>
           <div className="mt-5 grid gap-5 md:grid-cols-3">
-            {DRILLS.map((drill) => {
+            {visibleDrills.map((drill) => {
               const s = bestByDrill.get(drill.id);
               const gate = UNLOCKABLE_DRILLS.find((u) => u.id === drill.id);
               const open = !gate || isUnlocked(gate, unlockStats);
@@ -121,10 +134,7 @@ export default function Gym() {
                         <span className="flex items-center gap-1.5">
                           <Timer className="size-3.5" /> {drill.seconds}s
                         </span>
-                        <span className="flex items-center gap-1.5">
-                          <Trophy className="size-3.5" />
-                          {s ? `Best ${s.bestScore}` : "Untried"}
-                        </span>
+                        <span>{s ? `Best score ${s.bestScore}` : "First try"}</span>
                       </div>
                       <Link to={`/practice/${drill.id}`} className="border-t-2 border-ink">
                         <NBButton variant="paper" className="w-full rounded-none py-2.5 text-xs">
@@ -155,6 +165,19 @@ export default function Gym() {
               );
             })}
           </div>
+          {totalPages > 1 && (
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <NBButton variant="paper" className="px-3 py-2 text-xs" onClick={() => setPage(page - 1)} disabled={page <= 1}>
+                <ChevronLeft className="size-3.5" /> Previous
+              </NBButton>
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                Showing drills {(page - 1) * perPage + 1}-{Math.min(page * perPage, DRILLS.length)} of {DRILLS.length}
+              </p>
+              <NBButton variant="paper" className="px-3 py-2 text-xs" onClick={() => setPage(page + 1)} disabled={page >= totalPages}>
+                Next <ChevronRight className="size-3.5" />
+              </NBButton>
+            </div>
+          )}
         </section>
 
         {/* No-mic callout */}

@@ -1,9 +1,7 @@
-import { useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { NBBadge, NBPanel, NBMeter } from "@/components/nb";
 import { AppShell } from "@/components/AppShell";
-import { levelInfo, type AchievementStats } from "@/lib/gamify";
-import { TRENDS_UNLOCK, buildToneTrends, isUnlocked, type UnlockStats } from "@/lib/unlocks";
+import { buildToneTrends } from "@/lib/unlocks";
 import { TONE_LABELS } from "@/lib/tone-analyzer";
 import { DRILLS } from "@/lib/drills";
 import {
@@ -22,34 +20,8 @@ import { cn } from "@/lib/utils";
  * Clean, focused, no clutter.
  */
 export default function Progress() {
-  const progression = useQuery(api.dailyLog.progression);
   const recentSessions = useQuery(api.sessions.listSessions, { limit: 5 });
   const trendSessions = useQuery(api.sessions.listSessions, { limit: 10 });
-  const drillStats = useQuery(api.sessions.drillStats);
-
-  const level = levelInfo(progression?.totalXp ?? 0);
-  const bestByDrill = new Map((drillStats ?? []).map((s) => [s.drill, s]));
-
-  const stats: AchievementStats = {
-    totalSessions: progression?.totalSessions ?? 0,
-    totalMinutes: progression?.totalMinutes ?? 0,
-    bestOverall: progression?.bestOverall ?? 0,
-    totalQuiz: progression?.totalQuiz ?? 0,
-    totalReframes: progression?.totalReframes ?? 0,
-    totalResets: progression?.totalResets ?? 0,
-    streakDays: progression?.streakDays ?? 0,
-    drillsTried: progression?.drillsTried ?? 0,
-    drills: progression?.drills ?? DRILLS.length,
-  };
-
-  const unlockStats: UnlockStats = {
-    takes: stats.totalSessions,
-    level: level.level,
-    drillsTried: stats.drillsTried,
-    bestScore: stats.bestOverall,
-    streak: stats.streakDays,
-  };
-  const trendsUnlocked = isUnlocked(TRENDS_UNLOCK, unlockStats);
 
   return (
     <AppShell active="progress">
@@ -60,19 +32,17 @@ export default function Progress() {
             Your progress
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Track how you're improving, take by take.
+            A simple view of your last takes.
           </p>
         </section>
 
-        {/* Tone trends — unlocked after 5 takes */}
-        {trendsUnlocked && trendSessions && trendSessions.length >= 2 && (
+        {trendSessions && trendSessions.length >= 2 && (
           <ToneTrendsPanel sessions={trendSessions} />
         )}
-        {!trendsUnlocked && (
+        {(!trendSessions || trendSessions.length < 2) && (
           <NBPanel className="bg-card/70 p-5">
             <p className="text-sm text-muted-foreground">
-              Complete <span className="font-bold text-ink">5 more takes</span> to see your tone trends.
-              You're at {stats.totalSessions}.
+              Record at least two takes to see trends.
             </p>
           </NBPanel>
         )}
@@ -96,16 +66,15 @@ export default function Progress() {
             )}
             {recentSessions?.length === 0 && (
               <p className="p-6 text-sm text-muted-foreground">
-                Start with your first take.
+                No takes yet. Start your first one in the gym.
               </p>
             )}
             {recentSessions?.map((s) => (
-              <RecentTakeRow key={s._id} session={s} best={bestByDrill.get(s.drill)} />
+              <RecentTakeRow key={s._id} session={s} />
             ))}
           </div>
         </section>
 
-        <DeleteAccountSection />
       </div>
     </AppShell>
   );
@@ -140,6 +109,9 @@ function ToneTrendsPanel({
           <TrendingUp className="size-5" /> Tone trends
         </div>
       </div>
+      <p className="px-6 pt-4 text-sm text-muted-foreground">
+        Up arrow means that score has improved recently. Down means it dipped.
+      </p>
       <div className="grid gap-4 p-6 sm:grid-cols-2 lg:grid-cols-4">
         {rows.map((r) => {
           const Icon = icons[r.direction];
@@ -170,11 +142,10 @@ function ToneTrendsPanel({
 }
 
 /**
- * One recent take: tone badge, drill, score, and metrics.
+ * One recent take with easy-to-read factor scores.
  */
 function RecentTakeRow({
   session: s,
-  best,
 }: {
   session: {
     _id: string;
@@ -189,10 +160,8 @@ function RecentTakeRow({
     voicedRatio: number;
     dominantTone: string;
   };
-  best?: { bestScore: number; attemptCount: number };
 }) {
   const [open, setOpen] = useState(false);
-  const delta = best ? s.overallScore - best.bestScore : null;
 
   const factors = [
     { label: "Calm", score: s.calmScore },
@@ -248,28 +217,6 @@ function RecentTakeRow({
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-function DeleteAccountSection() {
-  const deleteAccount = useMutation(api.users.deleteAccount);
-
-  const handleDelete = async () => {
-    if (confirm("Permanently delete your account and all data?")) {
-      await deleteAccount();
-      window.location.href = "/";
-    }
-  };
-
-  return (
-    <div className="border-t border-red-200 pt-6">
-      <button
-        onClick={handleDelete}
-        className="px-4 py-2 bg-red-600 text-white text-xs font-semibold rounded hover:bg-red-700 transition-colors"
-      >
-        Delete Account
-      </button>
     </div>
   );
 }
