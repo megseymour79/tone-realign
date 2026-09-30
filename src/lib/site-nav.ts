@@ -82,7 +82,7 @@ export function appTourStops(
   pathname: string,
 ): { prev: (typeof APP_ORDER)[number] | null; next: (typeof APP_ORDER)[number] | null } {
   const len = APP_ORDER.length;
-  let i = APP_ORDER.findIndex((p) => p.to === pathname);
+  const i = APP_ORDER.findIndex((p) => p.to === pathname);
   if (i < 0) {
     const match = APP_VIRTUAL.find((m) => pathname.startsWith(m.prefix));
     if (match) return { prev: APP_ORDER[match.prev], next: APP_ORDER[match.next] };

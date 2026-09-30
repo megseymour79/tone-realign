@@ -1,6 +1,6 @@
 import React from "react";
 
-export function TermsOfService() {
+export default function TermsOfService() {
   return (
     <main className="max-w-3xl mx-auto px-4 py-8 text-neutral-800">
       <h1 className="text-3xl font-bold mb-2">Terms of Service for ShiftedTone</h1>

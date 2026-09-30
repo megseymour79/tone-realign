@@ -15,6 +15,7 @@ import { TONE_LABELS } from "@/lib/tone-analyzer";
 import { ArrowRight, Languages, RefreshCw } from "lucide-react";
 import { useMutation } from "convex/react";
 import { useEffect, useMemo, useState } from "react";
+import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
 type Pass = "reflex" | "intended";
@@ -84,6 +85,7 @@ export default function Translate() {
   // A completed translation credits the daily checklist (idempotent server-side).
   useEffect(() => {
     if (reflexAnalysis && intendedAnalysis) {
+      trackEvent("translate_completed");
       mark({ action: "translate" }).catch(() => {});
     }
   }, [reflexAnalysis, intendedAnalysis, mark]);

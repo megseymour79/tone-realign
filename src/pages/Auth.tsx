@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/input-otp";
 import { useAuth } from "@/hooks/use-auth";
 import logo from "@/assets/logo.svg";
+import { trackEvent } from "@/lib/analytics";
 import { ArrowRight, AudioWaveform, Loader2, UserX } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
@@ -48,6 +49,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
     try {
       const formData = new FormData(event.currentTarget);
       await signIn("email-otp", formData);
+      trackEvent("auth_otp_requested");
       setStep({ email: formData.get("email") as string });
       setIsLoading(false);
     } catch (error) {
@@ -68,6 +70,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
     try {
       const formData = new FormData(event.currentTarget);
       await signIn("email-otp", formData);
+      trackEvent("auth_signed_in", { method: "email_otp" });
       navigate(redirect);
     } catch (error) {
       console.error("OTP verification error:", error);
@@ -82,6 +85,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
     setError(null);
     try {
       await signIn("anonymous");
+      trackEvent("auth_signed_in", { method: "guest" });
       navigate(redirect);
     } catch (error) {
       console.error("Guest login error:", error);

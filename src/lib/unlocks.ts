@@ -1,5 +1,3 @@
-import { levelInfo } from "./gamify";
-
 /**
  * Progressive unlocking — the reason to come back tomorrow.
  *

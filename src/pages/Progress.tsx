@@ -25,10 +25,8 @@ export default function Progress() {
   const progression = useQuery(api.dailyLog.progression);
   const recentSessions = useQuery(api.sessions.listSessions, { limit: 5 });
   const trendSessions = useQuery(api.sessions.listSessions, { limit: 10 });
-  const drillStats = useQuery(api.sessions.drillStats);
 
   const level = levelInfo(progression?.totalXp ?? 0);
-  const bestByDrill = new Map((drillStats ?? []).map((s) => [s.drill, s]));
 
   const stats: AchievementStats = {
     totalSessions: progression?.totalSessions ?? 0,
@@ -100,7 +98,7 @@ export default function Progress() {
               </p>
             )}
             {recentSessions?.map((s) => (
-              <RecentTakeRow key={s._id} session={s} best={bestByDrill.get(s.drill)} />
+              <RecentTakeRow key={s._id} session={s} />
             ))}
           </div>
         </section>
@@ -174,7 +172,6 @@ function ToneTrendsPanel({
  */
 function RecentTakeRow({
   session: s,
-  best,
 }: {
   session: {
     _id: string;
@@ -189,10 +186,8 @@ function RecentTakeRow({
     voicedRatio: number;
     dominantTone: string;
   };
-  best?: { bestScore: number; attemptCount: number };
 }) {
   const [open, setOpen] = useState(false);
-  const delta = best ? s.overallScore - best.bestScore : null;
 
   const factors = [
     { label: "Calm", score: s.calmScore },

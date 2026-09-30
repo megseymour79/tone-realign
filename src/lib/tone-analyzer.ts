@@ -217,9 +217,7 @@ export function analyzeFrames(
         flatFrames.length
       : null;
   const jitter = jitterSemitones(pitches);
-  const shimmer = shimmerDb(
-    frames.filter((f) => f.pitchHz !== null).map((f) => f.volume),
-  );
+  shimmerDb(frames.filter((f) => f.pitchHz !== null).map((f) => f.volume));
 
   const avgPitchHz =
     pitches.length > 0
@@ -452,8 +450,6 @@ export interface FactorFeedback {
   /** One concrete thing to do next time — specific to the weakest component. */
   tip: string;
 }
-
-const paceIdeal = 130; // wpm — mirrors the calm scoring formula above
 
 function paceVerdict(wpm: number): string {
   if (wpm > 190) return `Very fast — ${wpm} wpm outruns most listeners`;
