@@ -1,7 +1,7 @@
 {
   "name": "shiftedtone",
   "private": true,
-  "version": "0.0.0",
+  "version": "2026.9.17",
   "type": "module",
   "scripts": {
     "dev": "vite",
