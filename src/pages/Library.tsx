@@ -18,7 +18,7 @@ export default function Library() {
           <NBBadge className="bg-sun text-ink">The library</NBBadge>
           <h1 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">
             Ideas from the <span className="italic text-sun">pros</span>.
-            Reps from you.
+            Practice from you.
           </h1>
           <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted-foreground">
             The free web shelf — websites, talks, and studies from the people
@@ -85,8 +85,8 @@ export default function Library() {
         />
         <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-5 px-4 py-14 text-center">
           <h2 className="max-w-2xl font-display text-3xl text-balance sm:text-4xl">
-            Ideas are the warm-up. <span className="italic">Reps</span> are the
-            workout.
+            Ideas are the warm-up. <span className="italic">Practice</span> is
+            the workout.
           </h2>
           <Link to="/auth">
             <NBButton variant="ink" className="px-8 py-4 text-lg">

@@ -109,8 +109,8 @@ export default function Dashboard() {
           </div>
         </section>
 
-        {/* Quick reps — every tool one tap away */}
-        <section aria-label="Quick reps">
+        {/* Quick practice — every tool one tap away */}
+        <section aria-label="Quick practice">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
             {[
               { to: "/gym", icon: Mic, label: "Quick take", sub: "45s", color: "bg-coral" },

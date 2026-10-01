@@ -28,7 +28,7 @@ const STEPS = [
   {
     icon: Brain,
     title: "Grow",
-    body: "Take one practical idea into your next try. Every small rep helps a steadier voice feel more natural.",
+    body: "Take one practical idea into your next try. Each practice session helps a steadier voice feel more natural.",
     color: "bg-coral",
   },
 ];
@@ -47,8 +47,8 @@ export default function HowItWorks() {
             How it <span className="italic text-coral">actually</span> works
           </h1>
           <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted-foreground">
-            Self-awareness doesn't change anything on its own. Reps do. Every
-            take is one.
+            Self-awareness doesn't change anything on its own. Practice does.
+            Every take is one.
           </p>
         </div>
       </section>
@@ -88,7 +88,7 @@ export default function HowItWorks() {
               <span className="size-2 rounded-full bg-coral" />
             </span>
             <p>
-              <span className="font-medium text-ink">Every rep counts.</span>{" "}
+              <span className="font-medium text-ink">Every practice counts.</span>{" "}
               You’re finding your rhythm.
             </p>
           </div>

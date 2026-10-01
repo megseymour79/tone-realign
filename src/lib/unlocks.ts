@@ -70,22 +70,6 @@ export const UNLOCKABLE_DRILLS: Unlockable[] = [
   },
 ];
 
-// ---- Feature unlocks (beyond the drill catalog) ----
-
-/**
- * Tone trends unlock after a few takes — it needs a handful of scores
- * before a trend means anything.
- */
-export const TRENDS_UNLOCK: Unlockable = {
-  id: "tone-trends",
-  name: "Tone trends",
-  blurb: "Your calm, energy, clarity and stability over time — see which way each is moving.",
-  req: { takes: 5 },
-};
-
-/** Everything that can be locked, for the next-goal chooser. */
-const ALL_UNLOCKABLES = [...UNLOCKABLE_DRILLS, TRENDS_UNLOCK];
-
 // ---- Evaluation ----
 
 export interface UnlockStats {
@@ -147,7 +131,7 @@ export interface NextUnlock {
  */
 export function nextUnlock(s: UnlockStats): NextUnlock | null {
   let best: NextUnlock | null = null;
-  for (const item of ALL_UNLOCKABLES) {
+  for (const item of UNLOCKABLE_DRILLS) {
     if (isUnlocked(item, s)) continue;
     const goal = unlockGoalLine(item, s);
     const pct = unlockProgressPct(item, s);

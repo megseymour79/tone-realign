@@ -24,7 +24,7 @@ export default function Watch() {
           <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted-foreground">
             Seven curated videos on tone, delivery, and regulated responses —
             from Jefferson Fisher to Vanessa Van Edwards. Every one ends the
-            same way: with a drill underneath it, so the idea becomes a rep.
+            same way: with a drill underneath it, so you can practice the idea.
           </p>
         </div>
       </section>

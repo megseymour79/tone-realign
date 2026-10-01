@@ -20,7 +20,7 @@ export const READING_LIST: ReadingResource[] = [
     title: "Active Listening",
     source: "Greater Good in Action · UC Berkeley",
     blurb:
-      "The step-by-step protocol from the science-of-happiness lab: paraphrase, ask, validate, watch your body language, park your rebuttal. Ten minutes a week to build the core rep.",
+      "The step-by-step protocol from the science-of-happiness lab: paraphrase, ask, validate, watch your body language, park your rebuttal. Ten minutes a week to build this core communication skill.",
     url: "https://ggia.berkeley.edu/practice/active_listening",
     color: "bg-sun",
     kind: "research",

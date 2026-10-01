@@ -2,7 +2,6 @@ import { describe, expect, test } from "bun:test";
 import {
   STARTER_DRILLS,
   UNLOCKABLE_DRILLS,
-  TRENDS_UNLOCK,
   isUnlocked,
   unlockGoalLine,
   unlockProgressPct,
@@ -41,10 +40,6 @@ describe("unlock catalog integrity", () => {
       expect(u.blurb.trim().length).toBeGreaterThan(10);
       expect(Object.values(u.req).some((v) => v !== undefined)).toBe(true);
     }
-  });
-
-  test("trends unlock needs a handful of takes (a trend requires history)", () => {
-    expect(TRENDS_UNLOCK.req.takes).toBeGreaterThanOrEqual(3);
   });
 
   test("take gates stay reachable (nothing beyond 10 takes)", () => {

@@ -67,7 +67,7 @@ const READS: {
     toneColor: "bg-mint",
     pace: "135 wpm",
     pitch: "Steady",
-    note: "Warmth with a spine. Remember how this felt — that's the rep.",
+    note: "Warmth with a spine. Remember how this felt — that's a keeper.",
   },
 ];
 
@@ -347,7 +347,7 @@ export default function Home() {
             {
               to: "/drills",
               title: "See the drills",
-              body: "Eight real-world reps — calm, warmth, boundaries, recovery, praise.",
+              body: "Eight real-world drills for calm, warmth, boundaries, recovery, and praise.",
               color: "bg-mint",
             },
             {
@@ -445,7 +445,7 @@ function FeaturedWatchTeaser() {
           </div>
           <p className="max-w-md text-sm leading-relaxed text-paper/60">
             Coaches and researchers on what your voice broadcasts — every
-            video paired with the drill that turns it into a rep.
+            video paired with a drill to help you practice the idea.
           </p>
         </div>
 
@@ -455,7 +455,7 @@ function FeaturedWatchTeaser() {
             <p className="text-base leading-relaxed text-paper/80">
               Press play right here — no leaving the page. When it clicks,
               the "Train it" card underneath hands the idea to a 45-second
-              drill so it becomes a rep, not just a takeaway.
+              drill so you can practice it, not just take away an idea.
             </p>
             <div className="grid grid-cols-3 gap-3">
               {others.map((v) => (

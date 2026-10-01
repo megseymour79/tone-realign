@@ -3,7 +3,7 @@ import { api } from "../convex/_generated/api";
 import { NBBadge, NBPanel, NBMeter } from "@/components/nb";
 import { AppShell } from "@/components/AppShell";
 import { levelInfo, type AchievementStats } from "@/lib/gamify";
-import { TRENDS_UNLOCK, buildToneTrends, isUnlocked, type UnlockStats } from "@/lib/unlocks";
+import { buildToneTrends } from "@/lib/unlocks";
 import { TONE_LABELS } from "@/lib/tone-analyzer";
 import { DRILLS } from "@/lib/drills";
 import {
@@ -40,15 +40,6 @@ export default function Progress() {
     drills: progression?.drills ?? DRILLS.length,
   };
 
-  const unlockStats: UnlockStats = {
-    takes: stats.totalSessions,
-    level: level.level,
-    drillsTried: stats.drillsTried,
-    bestScore: stats.bestOverall,
-    streak: stats.streakDays,
-  };
-  const trendsUnlocked = isUnlocked(TRENDS_UNLOCK, unlockStats);
-
   return (
     <AppShell active="progress">
       <div className="mx-auto flex max-w-4xl flex-col gap-8 px-4 py-6">
@@ -62,17 +53,9 @@ export default function Progress() {
           </p>
         </section>
 
-        {/* Tone trends — unlocked after 5 takes */}
-        {trendsUnlocked && trendSessions && trendSessions.length >= 2 && (
+        {/* Trends need at least two practice sessions to compare. */}
+        {trendSessions && trendSessions.length >= 2 && (
           <ToneTrendsPanel sessions={trendSessions} />
-        )}
-        {!trendsUnlocked && (
-          <NBPanel className="bg-card/70 p-5">
-            <p className="text-sm text-muted-foreground">
-              Complete <span className="font-bold text-ink">5 more takes</span> to see your tone trends.
-              You're at {stats.totalSessions}.
-            </p>
-          </NBPanel>
         )}
 
         {/* Recent takes */}

@@ -32,11 +32,11 @@ const ANGLES = [
 ];
 
 const TAGS = [
-  "steady reps",
-  "warm reps",
-  "boundary reps",
-  "recovery reps",
-  "patience reps",
+  "steady practice",
+  "warm practice",
+  "boundary practice",
+  "recovery practice",
+  "patient practice",
 ];
 
 /** Days since epoch — stable across reloads, changes at local midnight. */

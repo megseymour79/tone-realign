@@ -136,8 +136,8 @@ export function DailyChecklist({ todayDrillId }: { todayDrillId: string }) {
         </div>
 
         <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-          Four small reps beat one heroic session. Miss nothing and the sweep
-          bonus lands on top.
+          Four small practice activities beat one heroic session. Complete them
+          all and the sweep bonus lands on top.
         </p>
       </div>
     </NBPanel>

@@ -14,7 +14,7 @@ import { Link } from "react-router";
 /**
  * /calm — the low-arousal side of training. The full grounding kit
  * (six exercises) plus the two no-mic practices. Nothing to score,
- * nothing to unlock — a place to downshift before or after reps.
+ * nothing to unlock — a place to downshift before or after practice.
  */
 export default function Calm() {
   const reframeLogs = useQuery(api.reframes.list, { limit: 2 });
