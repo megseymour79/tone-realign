@@ -15,20 +15,20 @@ import { Link } from "react-router";
 const STEPS = [
   {
     icon: Mic,
-    title: "01 · Speak",
+    title: "Speak",
     body: "Pick a drill and talk like you would to a real person. We hand you the prompt; you bring the honesty.",
     color: "bg-sun",
   },
   {
     icon: Activity,
-    title: "02 · See",
-    body: "While you talk, we listen for pitch, pace, and pressure — then show you the numbers and what they mean.",
+    title: "Notice",
+    body: "While you talk, we notice your pitch, pace, and pressure — and turn them into clear, kind feedback.",
     color: "bg-mint",
   },
   {
     icon: Brain,
-    title: "03 · Rewire",
-    body: "You get a straight read on how you sounded and one thing to try next time. Small reps change the default.",
+    title: "Grow",
+    body: "Take one practical idea into your next try. Every small rep helps a steadier voice feel more natural.",
     color: "bg-coral",
   },
 ];
@@ -67,12 +67,6 @@ export default function HowItWorks() {
                 className="transition-transform duration-300 hover:-translate-y-1"
               >
                 <NBPanel className="relative h-full overflow-hidden">
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute -bottom-7 -right-1 font-display text-[7.5rem] leading-none text-ink/5"
-                  >
-                    0{i + 1}
-                  </span>
                   <div
                     className={`flex items-center justify-between border-b-2 border-ink px-5 py-3 ${step.color}`}
                   >
@@ -87,10 +81,22 @@ export default function HowItWorks() {
             ))}
           </div>
 
+          <div className="mt-6 flex items-center justify-center gap-3 text-sm text-muted-foreground">
+            <span aria-hidden className="flex gap-1.5">
+              <span className="size-2 rounded-full bg-sun" />
+              <span className="size-2 rounded-full bg-mint" />
+              <span className="size-2 rounded-full bg-coral" />
+            </span>
+            <p>
+              <span className="font-medium text-ink">Every rep counts.</span>{" "}
+              You’re finding your rhythm.
+            </p>
+          </div>
+
           <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
             <p className="max-w-md text-sm text-muted-foreground">
               That's the whole loop. No lectures, no modules — just honest
-              takes and straight scores until the calmer voice is the default.
+              takes and small wins as a calmer voice becomes the default.
             </p>
             <Link to="/auth">
               <NBButton variant="coral" className="px-6 py-3">
