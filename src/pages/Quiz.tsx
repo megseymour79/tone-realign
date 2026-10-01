@@ -53,7 +53,7 @@ function QuizCard({
           <MessagesSquare className="size-5" />
           <span className="font-display text-sm">{question.from}</span>
         </div>
-        {featured && <NBBadge className="bg-ink text-paper">Today's</NBBadge>}
+        {featured && <NBBadge className="bg-ink text-paper">This week's</NBBadge>}
       </div>
 
       <div className="p-6">
@@ -180,7 +180,7 @@ export default function Quiz() {
           <p className="mt-2 max-w-lg text-sm text-muted-foreground">
             Tone starts before you speak. Each scenario is a real moment — pick
             the reply you'd actually send, then see what it would broadcast.
-            Today's is featured; the rest are there when you want them
+            This week's is featured; the rest are there when you want them
             ({DAILY_ANGLES.length * 4 + 2} total, new one daily).
           </p>
           <p className="mt-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">

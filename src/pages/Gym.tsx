@@ -71,7 +71,7 @@ export default function Gym() {
               </span>
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest">
-                  Today's challenge
+                  This week's challenge
                 </p>
                 <h1 className="font-display text-xl leading-tight sm:text-2xl">
                   {daily.drill.name} — {daily.angle.toLowerCase()}
@@ -80,7 +80,7 @@ export default function Gym() {
             </div>
             <Link to={`/practice/${daily.drill.id}`}>
               <NBButton variant="ink" className="text-xs">
-                <Mic className="size-3.5" /> Do today's take
+                <Mic className="size-3.5" /> Do this week's take
               </NBButton>
             </Link>
           </div>
@@ -173,7 +173,7 @@ export default function Gym() {
             </div>
             <Link to="/quiz">
               <NBButton variant="sun" className="text-xs">
-                Today's scenario <ArrowRight className="size-3.5" />
+                This week's scenario <ArrowRight className="size-3.5" />
               </NBButton>
             </Link>
           </div>

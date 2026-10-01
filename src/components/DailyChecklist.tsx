@@ -41,7 +41,7 @@ export function DailyChecklist({ todayDrillId }: { todayDrillId: string }) {
     <NBPanel className="overflow-hidden">
       <div className="flex items-center justify-between border-b-2 border-ink bg-sun px-5 py-3">
         <div className="flex items-center gap-2 font-display text-xl">
-          <Flame className="size-5" /> Today's four
+          <Flame className="size-5" /> This week's four
         </div>
         <NBBadge className="bg-card">
           {completed.size}/4 done

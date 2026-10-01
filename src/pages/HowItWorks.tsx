@@ -107,7 +107,7 @@ export default function HowItWorks() {
         </div>
       </section>
 
-      {/* Today's challenge teaser */}
+      {/* This week's challenge teaser */}
       <section className="border-b-2 border-ink">
         <div className="mx-auto max-w-6xl px-4 py-12">
           <div className="nb flex flex-wrap items-center justify-between gap-4 bg-sun nb-shadow">
@@ -117,7 +117,7 @@ export default function HowItWorks() {
               </span>
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest">
-                  Today's challenge is live
+                  This week's challenge is live
                 </p>
                 <p className="font-display text-lg leading-tight sm:text-xl">
                   {daily.drill.name} — {daily.angle.toLowerCase()}

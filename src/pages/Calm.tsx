@@ -55,7 +55,7 @@ export default function Calm() {
               </p>
               <Link to="/quiz" className="mt-6 inline-block">
                 <NBButton variant="sun" className="text-xs">
-                  Today's scenario <ArrowRight className="size-3.5" />
+                  This week's scenario <ArrowRight className="size-3.5" />
                 </NBButton>
               </Link>
             </div>

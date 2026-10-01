@@ -221,7 +221,7 @@ function PracticeRunner({ drill, isDaily }: { drill: Drill; isDaily: boolean }) 
             </NBButton>
           </Link>
           <div className="flex items-center gap-2">
-            {isDaily && <NBBadge className="bg-coral">★ Today's challenge</NBBadge>}
+            {isDaily && <NBBadge className="bg-coral">★ This week's challenge</NBBadge>}
             <NBBadge className="bg-sun">{drill.tag}</NBBadge>
           </div>
         </div>

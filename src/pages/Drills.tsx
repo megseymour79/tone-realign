@@ -39,7 +39,7 @@ export default function Drills() {
               </span>
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest">
-                  Today's challenge · {daily.tag}
+                  This week's challenge · {daily.tag}
                 </p>
                 <p className="font-display text-lg leading-tight sm:text-xl">
                   {daily.drill.name} — {daily.angle.toLowerCase()}
@@ -48,7 +48,7 @@ export default function Drills() {
             </div>
             <Link to="/auth">
               <NBButton variant="ink" className="text-xs">
-                <Mic className="size-3.5" /> Do today's take
+                <Mic className="size-3.5" /> Do this week's take
               </NBButton>
             </Link>
           </div>
@@ -107,7 +107,7 @@ export default function Drills() {
                           variant={isToday ? "coral" : "paper"}
                           className="w-full py-2 text-xs"
                         >
-                          {isToday ? "Take today's challenge" : "Try this drill"}{" "}
+                          {isToday ? "Take this week's challenge" : "Try this drill"}{" "}
                           <ArrowRight className="size-3.5" />
                         </NBButton>
                       </Link>

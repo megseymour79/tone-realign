@@ -151,7 +151,7 @@ export default function Dashboard() {
                 </span>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest">
-                    Today's challenge
+                    This week's challenge
                   </p>
                   <h2 className="font-display text-lg leading-tight sm:text-xl">
                     {daily.drill.name} — {daily.angle.toLowerCase()}
@@ -165,7 +165,7 @@ export default function Dashboard() {
               <div>
                 <Link to={`/practice/${daily.drill.id}`}>
                   <NBButton variant="ink" className="text-xs">
-                    <Mic className="size-3.5" /> Do today's take
+                    <Mic className="size-3.5" /> Do this week's take
                   </NBButton>
                 </Link>
               </div>
@@ -322,7 +322,7 @@ function ArcPanel({ streakDays }: { streakDays: number }) {
               <span className="text-xs text-muted-foreground">· {stage.promise}</span>
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              <span className="font-bold text-ink">Today's move:</span> {stage.move}
+              <span className="font-bold text-ink">This week's move:</span> {stage.move}
             </p>
           </div>
         </div>
