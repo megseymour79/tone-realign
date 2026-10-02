@@ -1,8 +1,7 @@
 import { useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
-import { NBBadge, NBPanel, NBMeter } from "@/components/nb";
+import { NBBadge, NBMeter } from "@/components/nb";
 import { AppShell } from "@/components/AppShell";
-import { levelInfo, type AchievementStats } from "@/lib/gamify";
 import { buildToneTrends } from "@/lib/unlocks";
 import { TONE_LABELS } from "@/lib/tone-analyzer";
 import { DRILLS } from "@/lib/drills";
@@ -22,23 +21,8 @@ import { cn } from "@/lib/utils";
  * Clean, focused, no clutter.
  */
 export default function Progress() {
-  const progression = useQuery(api.dailyLog.progression);
   const recentSessions = useQuery(api.sessions.listSessions, { limit: 5 });
   const trendSessions = useQuery(api.sessions.listSessions, { limit: 10 });
-
-  const level = levelInfo(progression?.totalXp ?? 0);
-
-  const stats: AchievementStats = {
-    totalSessions: progression?.totalSessions ?? 0,
-    totalMinutes: progression?.totalMinutes ?? 0,
-    bestOverall: progression?.bestOverall ?? 0,
-    totalQuiz: progression?.totalQuiz ?? 0,
-    totalReframes: progression?.totalReframes ?? 0,
-    totalResets: progression?.totalResets ?? 0,
-    streakDays: progression?.streakDays ?? 0,
-    drillsTried: progression?.drillsTried ?? 0,
-    drills: progression?.drills ?? DRILLS.length,
-  };
 
   return (
     <AppShell active="progress">
