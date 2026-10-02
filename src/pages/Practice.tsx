@@ -387,10 +387,8 @@ function PracticeRunner({ drill, isDaily }: { drill: Drill; isDaily: boolean }) 
             <p className="font-display text-xl">Your context</p>
           </div>
           <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-            Tell the mic what the take is for — who it's aimed at, what you're
-            responding to or opening. It gets saved with the take and your
-            coach reads it, so the advice lands on your moment, not a made-up
-            one.
+            Add a quick note about this take (who it is for or what happened).
+            It helps your saved feedback stay relevant.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {CONTEXT_PROMPTS.map((p) => (
@@ -419,7 +417,7 @@ function PracticeRunner({ drill, isDaily }: { drill: Drill; isDaily: boolean }) 
             className="nb mt-4 w-full bg-card p-3 text-sm outline-none placeholder:text-muted-foreground"
           />
           <p className="mt-2 text-xs text-muted-foreground">
-            Optional — but a coach that knows the room coaches better.
+            Optional.
           </p>
         </NBPanel>
 
@@ -486,13 +484,13 @@ function PracticeRunner({ drill, isDaily }: { drill: Drill; isDaily: boolean }) 
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 <div className="nb bg-secondary p-4">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                    Detailed tone description
+                    What this tone means
                   </p>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                     {TONE_LABELS[analysis.dominantTone]?.note}
                   </p>
                   <p className="mt-3 text-sm leading-relaxed">
-                    This take reads as <span className="font-bold">{TONE_LABELS[analysis.dominantTone]?.label ?? analysis.dominantTone}</span> — the strongest next move is to work on the weakest factor below and keep the line steady instead of chasing volume or speed.
+                    This take reads as <span className="font-bold">{TONE_LABELS[analysis.dominantTone]?.label ?? analysis.dominantTone}</span>. For the next take, focus on your lowest factor below.
                   </p>
                 </div>
                 <div className="nb bg-secondary p-4">
@@ -578,14 +576,6 @@ function PracticeRunner({ drill, isDaily }: { drill: Drill; isDaily: boolean }) 
                                 <p>
                                   <span className="font-bold">Practice this: </span>
                                   <span className="text-muted-foreground">{fb.tip}</span>
-                                </p>
-                                <p>
-                                  <span className="font-bold">How it's rated: </span>
-                                  <span className="text-muted-foreground">{factor.how}</span>
-                                </p>
-                                <p>
-                                  <span className="font-bold">The goal: </span>
-                                  <span className="text-muted-foreground">{factor.goal}</span>
                                 </p>
                               </>
                             );

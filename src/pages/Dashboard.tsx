@@ -1,5 +1,5 @@
 import { NBButton, NBPanel, NBStat } from "@/components/nb";
-import { AppShell, LevelRing } from "@/components/AppShell";
+import { AppShell } from "@/components/AppShell";
 import { DailyChecklist } from "@/components/DailyChecklist";
 import { dailyLabel, getAccessibleDailyChallenge } from "@/lib/daily";
 import { GROUNDING_EXERCISES } from "@/lib/grounding";
@@ -8,25 +8,19 @@ import { levelInfo } from "@/lib/gamify";
 import {
   UNLOCKABLE_DRILLS,
   isUnlocked,
-  nextUnlock,
   type UnlockStats,
-  type NextUnlock,
 } from "@/lib/unlocks";
 import { api } from "@/convex/_generated/api";
 import {
   Languages,
-  Lock,
   MessagesSquare,
   Mic,
   Shuffle,
   Sparkles,
-  TrendingUp,
   Wind,
 } from "lucide-react";
 import { useQuery } from "convex/react";
 import { Link } from "react-router";
-
-const DAY_LETTERS = ["S", "M", "T", "W", "T", "F", "S"];
 
 /**
  * /dashboard — the day at a glance. Today's numbers, today's goals,
@@ -36,8 +30,8 @@ const DAY_LETTERS = ["S", "M", "T", "W", "T", "F", "S"];
 export default function Dashboard() {
   const progression = useQuery(api.dailyLog.progression);
 
-  // Stats drive every panel here (level, unlocks, checklist, next-unlock);
-  // render only once they've loaded so a veteran never sees a zeros-frame.
+  // Stats drive every panel here; render only once they've loaded so a
+  // returning user never sees a zeros-frame.
   if (progression === undefined) {
     return (
       <AppShell active="dashboard">
@@ -66,15 +60,6 @@ export default function Dashboard() {
     bestScore: stats.bestOverall,
     streak: stats.streakDays,
   };
-  const next = nextUnlock(unlockStats);
-
-  const maxWeekXp = Math.max(1, ...(progression?.week ?? []).map((w) => w.xp));
-  const weekBars = (progression?.week ?? []).map((w) => ({
-    ...w,
-    label: DAY_LETTERS[new Date(w.day.replace(/-/g, "/")).getDay()],
-    h: Math.round((w.xp / maxWeekXp) * 100),
-  }));
-
   // The daily CTA must always be runnable: when the calendar pick sits
   // behind a lock, swap it for a starter so the checklist's deep link
   // never dead-ends on the lock screen.
@@ -93,14 +78,13 @@ export default function Dashboard() {
               {dailyLabel()} · your practice
             </p>
             <h1 className="mt-1 font-display text-3xl text-balance sm:text-4xl">
-              {level.label}{" "}
-              <span className="text-muted-foreground">· level {level.level}</span>
+              Keep your tone steady today
             </h1>
           </div>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <NBStat label="Total XP" value={progression?.totalXp ?? 0} className="bg-sun" />
             <NBStat label="Takes" value={stats.totalSessions} />
             <NBStat label="Streak" value={stats.streakDays} suffix="d" className="bg-mint" />
+            <NBStat label="Drills tried" value={stats.drillsTried} className="bg-sun" />
             <NBStat
               label="Best score"
               value={stats.bestOverall}
@@ -174,120 +158,10 @@ export default function Dashboard() {
           <DailyChecklist todayDrillId={daily.drill.id} />
         </section>
 
-        {/* Next unlock — the one concrete thing to chase next */}
-        {next && <NextUnlockPanel next={next} />}
-
         {/* 21-day arc — where you are in the reprogramming program */}
         <ArcPanel streakDays={stats.streakDays} />
-
-        {/* Progression center */}
-        <section id="progress" className="grid gap-6 lg:grid-cols-2">
-          <NBPanel className="flex flex-col overflow-hidden">
-            <div className="flex items-center justify-between border-b-2 border-ink px-5 py-3">
-              <div className="font-display text-xl">Progression</div>
-              <span className="nb inline-flex items-center bg-coral px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest">
-                {level.maxed ? "Top tier" : `${level.xpToNext} XP to ${level.nextLabel}`}
-              </span>
-            </div>
-            <div className="flex items-center gap-5 p-5">
-              <div className="scale-[2.1]">
-                <LevelRing level={level.level} pct={level.progressPct} />
-              </div>
-              <div className="min-w-0">
-                <div className="font-display text-2xl">{level.label}</div>
-                <div className="mt-1 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                  {level.into}
-                  {level.needed > 0 ? ` / ${level.needed}` : ""} XP this level
-                </div>
-                <div className="mt-3 flex h-4 gap-[3px]" aria-hidden>
-                  {Array.from({ length: 10 }).map((_, i) => (
-                    <span
-                      key={i}
-                      className={`flex-1 ${
-                        i < Math.round((level.progressPct / 100) * 10) ? "bg-coral" : "bg-muted"
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </NBPanel>
-
-          {/* Weekly XP chart */}
-          <NBPanel className="flex flex-col overflow-hidden">
-            <div className="border-b-2 border-ink p-5">
-              <div className="flex items-center justify-between">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                  Last 7 days
-                </p>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                  {progression?.todayXp ?? 0} XP today
-                </p>
-              </div>
-              <div className="mt-3 flex h-24 items-end gap-2">
-                {weekBars.map((b, i) => (
-                  <div key={b.day} className="flex flex-1 flex-col items-center gap-1">
-                    <div
-                      title={`${b.xp} XP`}
-                      className={`w-full ${i === weekBars.length - 1 ? "bg-coral" : "bg-ink"}`}
-                      style={{ height: `${Math.max(b.h, 4)}%` }}
-                    />
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
-                      {b.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex flex-1 items-center justify-between border-t-2 border-ink p-4">
-              <p className="text-xs text-muted-foreground">
-                Trends, trophies, and every take live on your record.
-              </p>
-              <Link
-                to="/progress"
-                className="flex shrink-0 items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-coral hover:underline"
-              >
-                <TrendingUp className="size-3.5" /> Progress
-              </Link>
-            </div>
-          </NBPanel>
-        </section>
       </div>
     </AppShell>
-  );
-}
-
-/**
- * The single next unlock: what's behind the lock, the one reachable
- * to-do, and progress toward it.
- */
-function NextUnlockPanel({ next }: { next: NextUnlock }) {
-  return (
-    <div className="nb bg-card nb-shadow">
-      <div className="flex flex-wrap items-center justify-between gap-4 p-4 sm:p-5">
-        <div className="flex items-center gap-4">
-          <span className="nb flex size-11 shrink-0 items-center justify-center bg-ink text-paper">
-            <Lock className="size-5" />
-          </span>
-          <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              Next unlock
-            </p>
-            <h2 className="font-display text-xl leading-tight">{next.item.name}</h2>
-            <p className="text-sm text-muted-foreground">{next.item.blurb}</p>
-          </div>
-        </div>
-        <div className="min-w-[220px] flex-1 sm:max-w-xs">
-          <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest text-muted-foreground">
-            <span>{next.goal || "Keep practicing"}</span>
-            <span>{next.progressPct}%</span>
-          </div>
-          <div className="mt-2 h-3 w-full border-2 border-ink bg-muted">
-            <div className="h-full bg-mint" style={{ width: `${next.progressPct}%` }} />
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }
 

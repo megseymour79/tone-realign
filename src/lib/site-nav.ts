@@ -61,7 +61,7 @@ export const APP_ORDER: { to: string; label: string; blurb: string }[] = [
   { to: "/translate", label: "Translate", blurb: "Say it again, mean it" },
   { to: "/quiz", label: "Read the Room", blurb: "Train the judgment" },
   { to: "/reframe", label: "Reframe Lab", blurb: "Rewrite the reaction" },
-  { to: "/progress", label: "Progress", blurb: "Trends, trophies, history" },
+  { to: "/progress", label: "Progress", blurb: "Recent takes and trends" },
 ];
 
 /**

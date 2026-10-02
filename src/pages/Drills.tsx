@@ -3,14 +3,28 @@ import { PublicLayout } from "@/components/PublicLayout";
 import { PagePager } from "@/components/PagePager";
 import { DRILLS } from "@/lib/drills";
 import { getAccessibleDailyChallenge } from "@/lib/daily";
-import { ArrowRight, Check, Mic, Sparkles } from "lucide-react";
+import { ArrowRight, Check, ChevronLeft, ChevronRight, Mic, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 
 export default function Drills() {
+  const [searchParams, setSearchParams] = useSearchParams();
   // Public page: model a brand-new user, so "today's challenge" always
   // matches what they'll actually be asked to run after signing up.
   const daily = getAccessibleDailyChallenge(() => false);
+  const perPage = 4;
+  const totalPages = Math.max(1, Math.ceil(DRILLS.length / perPage));
+  const rawPage = Number(searchParams.get("page") ?? "1");
+  const page = Number.isFinite(rawPage)
+    ? Math.min(totalPages, Math.max(1, Math.floor(rawPage)))
+    : 1;
+  const visibleDrills = DRILLS.slice((page - 1) * perPage, page * perPage);
+  const setPage = (nextPage: number) => {
+    const next = new URLSearchParams(searchParams);
+    if (nextPage <= 1) next.delete("page");
+    else next.set("page", String(nextPage));
+    setSearchParams(next);
+  };
 
   return (
     <PublicLayout>
@@ -58,8 +72,12 @@ export default function Drills() {
       {/* Drill cards */}
       <section className="nb-dots border-b-2 border-ink">
         <div className="mx-auto max-w-6xl px-4 py-14">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {DRILLS.map((drill, i) => {
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Page {page} of {totalPages}</p>
+            <p className="text-xs text-muted-foreground">Fewer cards per page to keep things focused.</p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+            {visibleDrills.map((drill, i) => {
               const isToday = drill.id === daily.drill.id;
               return (
                 <motion.div
@@ -117,6 +135,19 @@ export default function Drills() {
               );
             })}
           </div>
+          {totalPages > 1 && (
+            <div className="mt-6 flex items-center justify-between gap-3">
+              <NBButton variant="paper" className="px-3 py-2 text-xs" onClick={() => setPage(page - 1)} disabled={page <= 1}>
+                <ChevronLeft className="size-3.5" /> Previous
+              </NBButton>
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                Showing drills {(page - 1) * perPage + 1}-{Math.min(page * perPage, DRILLS.length)} of {DRILLS.length}
+              </p>
+              <NBButton variant="paper" className="px-3 py-2 text-xs" onClick={() => setPage(page + 1)} disabled={page >= totalPages}>
+                Next <ChevronRight className="size-3.5" />
+              </NBButton>
+            </div>
+          )}
         </div>
       </section>
       <PagePager />
