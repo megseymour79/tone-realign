@@ -14,7 +14,7 @@
     "validate:og": "node --experimental-strip-types scripts/validate-og.ts"
   },
   "dependencies": {
-    "@convex-dev/auth": "^0.0.90",
+    "@convex-dev/auth": "^0.0.96",
     "@hookform/resolvers": "^5.2.2",
     "@jridgewell/trace-mapping": "^0.3.31",
     "@oslojs/crypto": "^1.0.1",
