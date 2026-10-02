@@ -20,7 +20,7 @@ import {
   TrendingUp,
   Wind,
 } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link, useLocation } from "react-router";
 import { type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -51,11 +51,9 @@ export function AppShell({
   children: ReactNode;
 }) {
   const { signOut } = useAuth();
-  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/");
   };
 
   return (

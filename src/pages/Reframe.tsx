@@ -15,6 +15,7 @@ import { useAction, useMutation } from "convex/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/analytics";
 
 export default function Reframe() {
   const [trigger, setTrigger] = useState("");
@@ -81,6 +82,7 @@ export default function Reframe() {
         reframe: result.reframe,
         toneNote: result.toneNote,
       });
+      trackEvent("reframe_saved");
       toast.success("Kept. It's in your log.");
       setSaved(true);
       // Keeping a reframe credits today's checklist (idempotent server-side).

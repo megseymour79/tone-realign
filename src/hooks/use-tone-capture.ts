@@ -220,6 +220,72 @@ export function useToneCapture(): UseToneCapture {
     [cleanup, clearAudioUrl],
   );
 
+  const stop = useCallback(() => {
+    if (rafRef.current === null) return;
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+    if (recorderRef.current && recorderRef.current.state === "recording") {
+      try {
+        recorderRef.current.stop();
+      } catch {
+        // best-effort only
+      }
+    }
+    // Record the take's peak before any early return — the next start()
+    // uses it to begin pre-calibrated, so a quiet mic's second take is
+    // heard immediately instead of failing twice.
+    setLastPeakRawRms(maxRawRef.current);
+
+    // Dead-mic check: if the take never contained speech-level frames,
+    // the "analysis" would be noise dressed up as scores. Say why, based
+    // on what was actually measured — muted, too quiet, faint, or short.
+    if (isDeadTake(speechFramesRef.current)) {
+      const reason = deadTakeReason(speechFramesRef.current, maxRawRef.current);
+      // Enrich the verdict with what the stream reported — pure logic in
+      // capture-gain.ts, so the rules stay unit-testable.
+      const track = streamRef.current?.getAudioTracks()[0];
+      const message = deadTakeMessageFor(
+        reason,
+        track?.muted ?? false,
+        track?.label ?? "",
+      );
+      // Release the recognizer here too — it holds the mic independently
+      // of the stream, and skipping it on this early exit would leave the
+      // browser's mic indicator lit after a dead take.
+      try {
+        recognitionRef.current?.abort();
+      } catch {
+        // transcript is best-effort
+      }
+      recognitionRef.current = null;
+      cleanup();
+      setState("idle");
+      setError(message);
+      return;
+    }
+
+    try {
+      recognitionRef.current?.stop();
+    } catch {
+      // transcript is best-effort
+    }
+    recognitionRef.current = null;
+    const durationMs = performance.now() - startedAtRef.current;
+    setState("analyzing");
+    setLevel(0);
+
+    // Let the UI paint the analyzing state before the (sync) aggregation.
+    // Tracked so reset/unmount cancels it — no setState after unmount, and
+    // no stale analysis resurrecting a take the user already cleared.
+    analyzeTimerRef.current = window.setTimeout(() => {
+      analyzeTimerRef.current = null;
+      const result = analyzeFrames(framesRef.current, durationMs);
+      setAnalysis(result);
+      setState("done");
+      cleanup();
+    }, 60);
+  }, [cleanup]);
+
   const start = useCallback(
     async (lastPeakRawRms?: number | null, deviceId?: string | null) => {
       // Double-start guard: rAF covers the recording phase; startingRef covers
@@ -534,74 +600,8 @@ export function useToneCapture(): UseToneCapture {
         );
       }
     },
-    [cleanup, clearAudioUrl],
+    [cleanup, clearAudioUrl, stop],
   );
-
-  const stop = useCallback(() => {
-    if (rafRef.current === null) return;
-    cancelAnimationFrame(rafRef.current);
-    rafRef.current = null;
-    if (recorderRef.current && recorderRef.current.state === "recording") {
-      try {
-        recorderRef.current.stop();
-      } catch {
-        // best-effort only
-      }
-    }
-    // Record the take's peak before any early return — the next start()
-    // uses it to begin pre-calibrated, so a quiet mic's second take is
-    // heard immediately instead of failing twice.
-    setLastPeakRawRms(maxRawRef.current);
-
-    // Dead-mic check: if the take never contained speech-level frames,
-    // the "analysis" would be noise dressed up as scores. Say why, based
-    // on what was actually measured — muted, too quiet, faint, or short.
-    if (isDeadTake(speechFramesRef.current)) {
-      const reason = deadTakeReason(speechFramesRef.current, maxRawRef.current);
-      // Enrich the verdict with what the stream reported — pure logic in
-      // capture-gain.ts, so the rules stay unit-testable.
-      const track = streamRef.current?.getAudioTracks()[0];
-      const message = deadTakeMessageFor(
-        reason,
-        track?.muted ?? false,
-        track?.label ?? "",
-      );
-      // Release the recognizer here too — it holds the mic independently
-      // of the stream, and skipping it on this early exit would leave the
-      // browser's mic indicator lit after a dead take.
-      try {
-        recognitionRef.current?.abort();
-      } catch {
-        // transcript is best-effort
-      }
-      recognitionRef.current = null;
-      cleanup();
-      setState("idle");
-      setError(message);
-      return;
-    }
-
-    try {
-      recognitionRef.current?.stop();
-    } catch {
-      // transcript is best-effort
-    }
-    recognitionRef.current = null;
-    const durationMs = performance.now() - startedAtRef.current;
-    setState("analyzing");
-    setLevel(0);
-
-    // Let the UI paint the analyzing state before the (sync) aggregation.
-    // Tracked so reset/unmount cancels it — no setState after unmount, and
-    // no stale analysis resurrecting a take the user already cleared.
-    analyzeTimerRef.current = window.setTimeout(() => {
-      analyzeTimerRef.current = null;
-      const result = analyzeFrames(framesRef.current, durationMs);
-      setAnalysis(result);
-      setState("done");
-      cleanup();
-    }, 60);
-  }, [cleanup]);
 
   const reset = useCallback(() => {
     // Invalidate any in-flight start() (e.g. stuck on a permission prompt)

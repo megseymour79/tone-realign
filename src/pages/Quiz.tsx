@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useMutation } from "convex/react";
 import { useEffect, useRef, useState } from "react";
 import { api } from "@/convex/_generated/api";
+import { trackEvent } from "@/lib/analytics";
 
 /** Day number for the featured-question rotation (local midnight reset). */
 function todayNumber(): number {
@@ -85,6 +86,10 @@ function QuizCard({
                 type="button"
                 disabled={revealed}
                 onClick={() => {
+                  trackEvent("quiz_answered", {
+                    featured,
+                    correct: i === question.best,
+                  });
                   setPicked(i);
                   setPhase("revealed");
                 }}

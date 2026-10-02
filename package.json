@@ -1,5 +1,5 @@
 {
-  "name": "vite-template",
+  "name": "shiftedtone",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -8,7 +8,10 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit",
+    "test": "npx bun test",
+    "validate:og": "node --experimental-strip-types scripts/validate-og.ts"
   },
   "dependencies": {
     "@convex-dev/auth": "^0.0.90",

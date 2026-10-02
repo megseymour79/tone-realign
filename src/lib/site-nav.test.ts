@@ -221,12 +221,13 @@ describe("page split contracts", () => {
     expect(main).toContain("ScrollToTop");
   });
 
-  test("AppShell keeps exactly 5 mobile tab slots (4 tabs + mic FAB)", () => {
+  test("AppShell keeps exactly 4 mobile tab slots with no mic FAB", () => {
     const shell = readFileSync(
       new URL("../components/AppShell.tsx", import.meta.url),
       "utf8",
     );
-    expect(shell).toContain("grid-cols-5");
+    expect(shell).toContain("grid-cols-4");
+    expect(shell).not.toContain("grid-cols-5");
     // Only the tab-flagged destinations feed the bar.
     const tabs = (shell.match(/tab: true/g) ?? []).length;
     expect(tabs).toBe(4);

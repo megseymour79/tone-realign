@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { RequireAuth } from "@/components/RequireAuth";
 import { VlyToolbar } from "../vly-toolbar-readonly.tsx";
 import { InstrumentationProvider } from "@/instrumentation.tsx";
+import { initAnalytics, trackPageview } from "@/lib/analytics";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
 import { StrictMode, useEffect, lazy, Suspense } from "react";
@@ -18,6 +19,8 @@ const ToneCheck = lazy(() => import("./pages/ToneCheck.tsx"));
 const DrillsPage = lazy(() => import("./pages/Drills.tsx"));
 const Watch = lazy(() => import("./pages/Watch.tsx"));
 const Library = lazy(() => import("./pages/Library.tsx"));
+const Terms = lazy(() => import("./pages/Terms.tsx"));
+const Privacy = lazy(() => import("./pages/Privacy.tsx"));
 const AuthPage = lazy(() => import("./pages/Auth.tsx"));
 const Dashboard = lazy(() => import("./pages/Dashboard.tsx"));
 const Gym = lazy(() => import("./pages/Gym.tsx"));
@@ -45,6 +48,8 @@ function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+    initAnalytics();
+    trackPageview(pathname);
   }, [pathname]);
   return null;
 }
@@ -89,6 +94,8 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/drills" element={<DrillsPage />} />
               <Route path="/watch" element={<Watch />} />
               <Route path="/library" element={<Library />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
               <Route
                 path="/auth"
                 element={<AuthPage redirectAfterAuth="/dashboard" />}

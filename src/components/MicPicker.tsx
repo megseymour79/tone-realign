@@ -41,45 +41,6 @@ export function MicPicker({
     () => getSavedMicDeviceId() ?? "",
   );
 
-  // If the saved device has been unplugged since, clear it — otherwise the
-  // select would display "Default input" while start() still requests the
-  // stale device.
-  useEffect(() => {
-    if (selected && devices.length > 0 && !devices.some((d) => d.deviceId === selected)) {
-      setSelected("");
-      try {
-        localStorage.removeItem(STORAGE_KEY);
-      } catch {
-        // persistence is best-effort
-      }
-    }
-  }, [selected, devices]);
-
-  const enumerate = useCallback(() => {
-    navigator.mediaDevices
-      ?.enumerateDevices()
-      .then((all) =>
-        setDevices(
-          all
-            .filter((d) => d.kind === "audioinput")
-            .map((d) => ({
-              deviceId: d.deviceId,
-              label: d.label || `Microphone ${d.deviceId.slice(0, 5)}…`,
-            })),
-        ),
-      )
-      .catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    enumerate();
-    // Devices plug in and out; refresh while the picker is mounted.
-    navigator.mediaDevices?.addEventListener?.("devicechange", enumerate);
-    return () => {
-      navigator.mediaDevices?.removeEventListener?.("devicechange", enumerate);
-    };
-  }, [enumerate]);
-
   const choose = (deviceId: string) => {
     setSelected(deviceId);
     try {
@@ -89,6 +50,37 @@ export function MicPicker({
       // persistence is best-effort
     }
   };
+
+  const enumerate = useCallback(() => {
+    navigator.mediaDevices
+      ?.enumerateDevices()
+      .then((all) => {
+        const nextDevices = all
+          .filter((d) => d.kind === "audioinput")
+          .map((d) => ({
+            deviceId: d.deviceId,
+            label: d.label || `Microphone ${d.deviceId.slice(0, 5)}…`,
+          }));
+        setDevices(nextDevices);
+        if (
+          selected &&
+          nextDevices.length > 0 &&
+          !nextDevices.some((d) => d.deviceId === selected)
+        ) {
+          choose("");
+        }
+      })
+      .catch(() => {});
+  }, [selected]);
+
+  useEffect(() => {
+    enumerate();
+    // Devices plug in and out; refresh while the picker is mounted.
+    navigator.mediaDevices?.addEventListener?.("devicechange", enumerate);
+    return () => {
+      navigator.mediaDevices?.removeEventListener?.("devicechange", enumerate);
+    };
+  }, [enumerate]);
 
   if (devices.length === 0 && !activeLabel) return null;
 
